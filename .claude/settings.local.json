@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Read(//usr/local/bin/**)",
+      "Read(//Users/sakodanaoki/.nvm/versions/**)",
+      "Read(//opt/homebrew/bin/**)",
+      "Read(//Users/sakodanaoki/.volta/bin/**)",
+      "Read(//usr/**)",
+      "Bash(export PATH=\"$PATH:/opt/homebrew/bin:/usr/local/bin:$HOME/.nvm/versions/node/$\\(ls ~/.nvm/versions/node)",
+      "Bash(find /Users/sakodanaoki -name \"npm\" -type f 2>/dev/null | head -5; find /opt /usr/local -name \"npm\" -type f 2>/dev/null | head -5)",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "mcp__Claude_in_Chrome__navigate"
+    ]
+  }
+}
