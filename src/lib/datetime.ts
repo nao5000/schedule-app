@@ -7,11 +7,9 @@ export type GeneratedSlot = {
   end_at: string; // ISO
 };
 
-// "2026-05-20" + "09:00" を ローカルタイムで Date にする
+// "2026-05-20" + "09:00" を UTC として Date にする（タイムゾーン変換なし）
 function toLocalDate(dateStr: string, timeStr: string): Date {
-  const [y, m, d] = dateStr.split("-").map((v) => parseInt(v, 10));
-  const [hh, mm] = timeStr.split(":").map((v) => parseInt(v, 10));
-  return new Date(y, (m ?? 1) - 1, d ?? 1, hh ?? 0, mm ?? 0, 0, 0);
+  return new Date(`${dateStr}T${timeStr}:00.000Z`);
 }
 
 /**
@@ -58,14 +56,7 @@ export const WEEKDAY_REFERENCE_DATES: Record<number, string> = {
 };
 
 export function isWeekdayMode(startIso: string): boolean {
-  const d = new Date(startIso);
-  const y = d.getFullYear();
-  return y === 2000;
-}
-
-export function formatWeekdayHeader(startIso: string): string {
-  const d = new Date(startIso);
-  return `${WEEK_JP[d.getDay()]}曜日`;
+  return new Date(startIso).getUTCFullYear() === 2000;
 }
 
 function pad(n: number) {
@@ -75,23 +66,28 @@ function pad(n: number) {
 export function formatSlotLabel(startIso: string, endIso: string): string {
   const s = new Date(startIso);
   const e = new Date(endIso);
-  const datePart = `${s.getFullYear()}/${pad(s.getMonth() + 1)}/${pad(s.getDate())}(${WEEK_JP[s.getDay()]})`;
-  const timePart = `${pad(s.getHours())}:${pad(s.getMinutes())}〜${pad(e.getHours())}:${pad(e.getMinutes())}`;
+  const datePart = `${s.getUTCFullYear()}/${pad(s.getUTCMonth() + 1)}/${pad(s.getUTCDate())}(${WEEK_JP[s.getUTCDay()]})`;
+  const timePart = `${pad(s.getUTCHours())}:${pad(s.getUTCMinutes())}〜${pad(e.getUTCHours())}:${pad(e.getUTCMinutes())}`;
   return `${datePart} ${timePart}`;
 }
 
 export function formatDateHeader(startIso: string): string {
   const s = new Date(startIso);
-  return `${s.getFullYear()}/${pad(s.getMonth() + 1)}/${pad(s.getDate())} (${WEEK_JP[s.getDay()]})`;
+  return `${s.getUTCFullYear()}/${pad(s.getUTCMonth() + 1)}/${pad(s.getUTCDate())} (${WEEK_JP[s.getUTCDay()]})`;
+}
+
+export function formatWeekdayHeader(startIso: string): string {
+  const s = new Date(startIso);
+  return `${WEEK_JP[s.getUTCDay()]}曜日`;
 }
 
 export function formatTimeRange(startIso: string, endIso: string): string {
   const s = new Date(startIso);
   const e = new Date(endIso);
-  return `${pad(s.getHours())}:${pad(s.getMinutes())}〜${pad(e.getHours())}:${pad(e.getMinutes())}`;
+  return `${pad(s.getUTCHours())}:${pad(s.getUTCMinutes())}〜${pad(e.getUTCHours())}:${pad(e.getUTCMinutes())}`;
 }
 
 export function dateKey(startIso: string): string {
   const s = new Date(startIso);
-  return `${s.getFullYear()}-${pad(s.getMonth() + 1)}-${pad(s.getDate())}`;
+  return `${s.getUTCFullYear()}-${pad(s.getUTCMonth() + 1)}-${pad(s.getUTCDate())}`;
 }
