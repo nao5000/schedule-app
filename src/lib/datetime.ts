@@ -46,6 +46,28 @@ export function generateSlots(
 
 const WEEK_JP = ["日", "月", "火", "水", "木", "金", "土"];
 
+// 曜日モード用の参照日（2000-01-03 = 月曜日）
+export const WEEKDAY_REFERENCE_DATES: Record<number, string> = {
+  1: "2000-01-03", // 月
+  2: "2000-01-04", // 火
+  3: "2000-01-05", // 水
+  4: "2000-01-06", // 木
+  5: "2000-01-07", // 金
+  6: "2000-01-08", // 土
+  0: "2000-01-09", // 日
+};
+
+export function isWeekdayMode(startIso: string): boolean {
+  const d = new Date(startIso);
+  const y = d.getFullYear();
+  return y === 2000;
+}
+
+export function formatWeekdayHeader(startIso: string): string {
+  const d = new Date(startIso);
+  return `${WEEK_JP[d.getDay()]}曜日`;
+}
+
 function pad(n: number) {
   return n.toString().padStart(2, "0");
 }

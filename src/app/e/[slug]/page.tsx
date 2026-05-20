@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { formatDateHeader, formatTimeRange, dateKey } from "@/lib/datetime";
+import { formatDateHeader, formatTimeRange, dateKey, isWeekdayMode, formatWeekdayHeader } from "@/lib/datetime";
 
 type Slot = { id: string; start_at: string; end_at: string };
 type Participant = { id: string; name: string };
@@ -113,6 +113,8 @@ export default function EventPage() {
   if (!data) return <main className="max-w-2xl mx-auto px-4 py-8"><p className="text-gray-500">読み込み中...</p></main>;
 
   const { event, slots, participants } = data;
+  const weekdayMode = slots.length > 0 && isWeekdayMode(slots[0].start_at);
+  const headerLabel = (startAt: string) => weekdayMode ? formatWeekdayHeader(startAt) : formatDateHeader(startAt);
 
   return (
     <main className="max-w-2xl mx-auto px-4 py-8 space-y-8">
@@ -143,7 +145,7 @@ export default function EventPage() {
         <div className="space-y-4">
           {grouped.map(([dKey, daySlots]) => (
             <div key={dKey}>
-              <p className="text-sm font-semibold text-gray-700 mb-2">{formatDateHeader(daySlots[0].start_at)}</p>
+              <p className="text-sm font-semibold text-gray-700 mb-2">{headerLabel(daySlots[0].start_at)}</p>
               <div className="space-y-2">
                 {daySlots.map((s) => {
                   const cur = answers[s.id] ?? null;
@@ -196,7 +198,7 @@ export default function EventPage() {
                     <tr key={`h-${dKey}`}>
                       <td colSpan={participants.length + 2}
                         className="pt-3 pb-1 text-xs font-semibold text-gray-500">
-                        {formatDateHeader(daySlots[0].start_at)}
+                        {headerLabel(daySlots[0].start_at)}
                       </td>
                     </tr>
                     {daySlots.map((s) => {
